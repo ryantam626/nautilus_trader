@@ -909,10 +909,10 @@ cdef class DataEngine(Component):
                 root = instrument_id.symbol.root()
                 instruments = self._cache.instruments(venue=instrument_id.venue, underlying=root)
                 for instrument in instruments:
-                    self._create_new_book(instrument, book_type)
+                    self._create_new_book(instrument_id, instrument, book_type)
             else:
                 instrument = self._cache.instrument(instrument_id)
-                self._create_new_book(instrument, book_type)
+                self._create_new_book(instrument_id, instrument, book_type)
 
         # Always re-subscribe to override previous settings
         try:
@@ -959,10 +959,10 @@ cdef class DataEngine(Component):
                 priority=10,
             )
 
-    cpdef void _create_new_book(self, Instrument instrument, BookType book_type):
+    cpdef void _create_new_book(self, InstrumentId instrument_id, Instrument instrument, BookType book_type):
         if instrument is None:
             self._log.error(
-                f"Cannot subscribe to {instrument.id} <OrderBook> data: "
+                f"Cannot subscribe to {instrument_id} <OrderBook> data: "
                 f"no instrument found in the cache",
             )
             return
